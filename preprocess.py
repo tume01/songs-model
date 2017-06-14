@@ -43,18 +43,26 @@ def create_train():
   with open('./new_songs.json') as data_file:
     songs = json.load(data_file)
     with open("data/pre_train.csv", "w") as pre_train_file:
-      pre_train_writer = csv.writer(pre_train_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-      for song in songs:
-        lyric = pre_process(" ".join(str(element) for element in song['lyric']))
-        lyric = " ".join(str(element) for element in lyric)
-        tags = [tag.lower() for tag in song['tags']]
-        for sentiment in T:
-          for tag in tags:
-            if tag in T[sentiment]:
-              pre_train_writer.writerow([
-                lyric,
-                sentiment
-                ])
+      with open("data/pre_train_comments.csv", "w") as pre_train_comments_file:
+        pre_train_writer = csv.writer(pre_train_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        pre_train_comments = csv.writer(pre_train_comments_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        for song in songs:
+          lyric = pre_process(" ".join(str(element) for element in song['lyric']))
+          comment = pre_process(" ".join(str(element) for element in song['comments']))
+          lyric = " ".join(str(element) for element in lyric)
+          comment = " ".join(str(element) for element in comment)
+          tags = [tag.lower() for tag in song['tags']]
+          for sentiment in T:
+            for tag in tags:
+              if tag in T[sentiment]:
+                pre_train_writer.writerow([
+                  lyric,
+                  sentiment
+                  ])
+                pre_train_comments.writerow([
+                  comment,
+                  sentiment
+                  ])
 
 def main():
   create_train()

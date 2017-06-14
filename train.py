@@ -6,21 +6,23 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import GaussianNB
 
 def create_train():
-  df = pd.read_csv('data_lemma_lyrics_jl.csv')
+  df = pd.read_csv('data/pre_train_comments.csv')
   X = df.iloc[:, :-1]
   y = df.iloc[:, -1]
   X = X.values
   X = [element[0] for element in X]
-  print(X)
+
   sentiment_encoder = LabelEncoder()
   y = sentiment_encoder.fit_transform(y)
-  print(y.shape)
+
   tfidf = TfidfVectorizer()
 
-  X = tfidf.fit_transform(X)
-  print(X.shape)
+  X = tfidf.fit_transform(pd.DataFrame({'comments':X})['comments'].values.astype('U'))
+
+
   X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=1)
 
@@ -37,6 +39,11 @@ def create_train():
   y_pred = model_svm.predict(X_test)
   print(metrics.accuracy_score(y_pred, y_test))
   print("model trained")
+
+  # gnb = GaussianNB()
+  # gnb.fit(X_train, y_train)
+  # y_pred = gnb.predict(X_test)
+  # print(metrics.accuracy_score(y_pred, y_test))
 
 def main():
   create_train()
