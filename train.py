@@ -7,29 +7,32 @@ from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 
 def create_train():
-  df = pd.read_csv('data/pre_train_comments.csv')
+  df = pd.read_csv('data/tfidf_train.csv')
   X = df.iloc[:, :-1]
   y = df.iloc[:, -1]
-  X = X.values
-  X = [element[0] for element in X]
+  # X = X.values
 
-  sentiment_encoder = LabelEncoder()
-  y = sentiment_encoder.fit_transform(y)
+  # X = [element[0] for element in X]
 
-  tfidf = TfidfVectorizer()
+  # sentiment_encoder = LabelEncoder()
+  # y = sentiment_encoder.fit_transform(y)
 
-  X = tfidf.fit_transform(pd.DataFrame({'comments':X})['comments'].values.astype('U'))
+  # tfidf = TfidfVectorizer()
 
+  # X = tfidf.fit_transform(X)
+
+  # print(tfidf.get_feature_names())
 
   X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=1)
+            X, y, test_size=0.3, random_state=1)
 
   svm_model = SVC()
 
   search_parameters = {
-      'degree': [2, 3, 4], 'gamma': (np.arange(0.1, 1.1, 0.1)), 'C': (np.arange(0.1, 1.1, 0.1)), 'kernel': ['poly']
+      'degree': [2, 3, 4], 'gamma': (np.arange(0.1, 1.1, 0.1)), 'C': (np.arange(0.1, 1.1, 0.1)), 'kernel': ['poly', 'linear']
   }
   model_svm = GridSearchCV(
       svm_model, search_parameters, cv=10, scoring='accuracy', n_jobs=8)
@@ -40,7 +43,7 @@ def create_train():
   print(metrics.accuracy_score(y_pred, y_test))
   print("model trained")
 
-  # gnb = GaussianNB()
+  # gnb = MultinomialNB()
   # gnb.fit(X_train, y_train)
   # y_pred = gnb.predict(X_test)
   # print(metrics.accuracy_score(y_pred, y_test))
