@@ -29,7 +29,7 @@ def main():
             vectorFileWriter.writerow(words + ['class'])
             for key in groupedSongs.keys():
                 for song in groupedSongs[key]:
-                    results = [probabilistic(word, song, groupedSongs, key) for word in words]
+                    results = [song.countWord(word) for word in words]
                     results += [key]
                     vectorFileWriter.writerow(results)
 

@@ -42,29 +42,40 @@ def count_songs():
     print(songs_tag_counter.most_common(10))
 
 def create_train():
-  with open('./new_songs.json') as data_file:
-    songs = json.load(data_file)
-    with open("data/pre_train.csv", "w") as pre_train_file:
-      with open("data/pre_train_comments.csv", "w") as pre_train_comments_file:
+  with open('./TheBeatles_fix.json') as data_file:
+    albums = json.load(data_file)
+    with open("data/pre_train_beatles.csv", "w") as pre_train_file:
+      with open("data/pre_train_comments_beatles.csv", "w") as pre_train_comments_file:
         pre_train_writer = csv.writer(pre_train_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
         pre_train_comments = csv.writer(pre_train_comments_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-        for song in songs:
-          lyric = pre_process(" ".join(str(element) for element in song['lyric']))
-          comment = pre_process(" ".join(str(element) for element in song['comments']))
-          lyric = " ".join(str(element) for element in lyric)
-          comment = " ".join(str(element) for element in comment)
-          tags = [tag.lower() for tag in song['tags']]
-          for sentiment in T:
-            for tag in tags:
-              if tag in T[sentiment]:
-                pre_train_writer.writerow([
-                  lyric,
-                  sentiment
-                  ])
-                pre_train_comments.writerow([
-                  comment,
-                  sentiment
-                  ])
+        pre_train_writer.writerow([
+            'lyric',
+            'name',
+            'album'
+          ])
+        for album in albums:
+          for song in album['songs']:
+            lyric = pre_process(song['lyrics'])
+            # comment = pre_process(" ".join(str(element) for element in song['comments']))
+            lyric = " ".join(str(element) for element in lyric)
+            # comment = " ".join(str(element) for element in comment)
+            # tags = [tag.lower() for tag in song['tags']]
+            pre_train_writer.writerow([
+                    lyric,
+                    song['name'],
+                    album['album']
+                    ])
+            # for sentiment in T:
+            #    for tag in tags:
+            #     if tag in T[sentiment]:
+            #       pre_train_writer.writerow([
+            #         lyric,
+            #         sentiment
+            #         ])
+            #       pre_train_comments.writerow([
+            #         comment,
+            #         sentiment
+            #         ])
 
 def main():
   create_train()
